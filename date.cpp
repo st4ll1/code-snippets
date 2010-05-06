@@ -1,10 +1,8 @@
 #include "Date.h"
 
-
 Date::Date(unsigned short day = 1 , unsigned short month = 1, int year = 2000): _day(day), _month(month), _year(year){
     if(!isValid()) throw "Date isn`t valid";
 }
-
 
 Date::~Date(void){
 }
@@ -12,28 +10,7 @@ Date::~Date(void){
 bool Date::isValid()
 {
     if(_month < 1 || _month > 12) return false;
-    short d;
-    switch(_month){
-        case 1:
-        case 3:
-        case 5:
-        case 7:
-        case 8:
-        case 10:
-        case 12:
-            d = 31;
-            break;
-        case 4:
-        case 6:
-        case 9:
-        case 11:
-            d = 30;
-            break;
-        case 2:
-            if(isLeapYear(_year)) d=29;
-            else d=28;
-    }
-    if(_day < 1 || _day > d) return false;
+    if(_day < 1 || _day > monthDays(_month, _year)) return false;
     return true;
 }
 
@@ -68,30 +45,31 @@ bool Date::operator> (const Date& other){
     return false;
 }
 
+int Date::monthDays(int month, int year)const{
+    switch(month){
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 8:
+        case 10:
+        case 12:
+            return 31;
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+            return 30;
+        case 2:
+            if(isLeapYear(year)) return 29;
+            return 28;
+    }
+}
+
 int Date::dayOfYear()const{
     int day = 0;
     for(int i = 1; i < _month; i++){
-        switch(i){
-            case 1:
-            case 3:
-            case 5:
-            case 7:
-            case 8:
-            case 10:
-            case 12:
-                day += 31;
-                break;
-            case 4:
-            case 6:
-            case 9:
-            case 11:
-                day += 30;
-                break;
-            case 2:
-                if(isLeapYear(_year)) day += 29;
-                else day += 28;            
-        }
-       
+        day += monthDays(i, _year);       
     }
     return _day + day;
 }
